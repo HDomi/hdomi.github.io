@@ -3,13 +3,21 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
-  // Enable SSR for pre-rendering static pages (SSG)
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        module: "ESNext",
+      },
+    },
+  },
+
+  // 정적 페이지 사전 렌더링(SSG)을 위한 SSR 활성화
   ssr: true,
 
-  // Global CSS/SCSS import
+  // 글로벌 CSS/SCSS 가져오기
   css: ["~/assets/scss/main.scss"],
 
-  // App configurations including SEO details
+  // SEO 설정을 포함한 앱 구성
   app: {
     baseURL: "/",
     head: {
@@ -27,7 +35,7 @@ export default defineNuxtConfig({
         },
         { name: "format-detection", content: "telephone=no" },
 
-        // Open Graph
+        // 오픈 그래프 (Open Graph)
         { property: "og:type", content: "website" },
         {
           property: "og:title",
@@ -40,7 +48,7 @@ export default defineNuxtConfig({
         },
         { property: "og:url", content: "https://hdomi.github.io/" },
 
-        // Twitter
+        // 트위터 (Twitter)
         { name: "twitter:card", content: "summary_large_image" },
         {
           name: "twitter:title",

@@ -167,10 +167,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import projectsData from "../../public/data/projects-metadata.json";
-import postsData from "../../public/data/posts-index.json";
+import { useFetch } from "#app";
 
-// Type definitions
+// 타입 정의
 interface Project {
   url: string;
   title: string;
@@ -191,30 +190,34 @@ interface Post {
   tags: string[];
 }
 
-// Active Tab state
+// 활성화된 탭 상태
 const currentTab = ref<"projects" | "blog">("projects");
 
-// Search & filter states
+// 검색 및 필터 상태
 const searchQuery = ref("");
 const selectedTag = ref<string | null>(null);
 
-// Reset tag filters when switching tabs
+// 탭을 전환할 때 태그 필터 초기화
 watch(currentTab, () => {
   selectedTag.value = null;
 });
 
-// Dynamic search placeholder based on active tab
+// 활성화된 탭에 따른 동적 검색 플레이스홀더
 const searchPlaceholder = computed(() => {
   return currentTab.value === "projects"
     ? "프로젝트 제목, 설명 또는 태그 검색..."
     : "블로그 글 제목, 요약 또는 태그 검색...";
 });
 
-// Wrap data safely
-const projects = computed<Project[]>(() => (projectsData as Project[]) || []);
-const posts = computed<Post[]>(() => (postsData as Post[]) || []);
+// Firebase API에서 동적으로 데이터 가져오기
+const { data: projectsList } = await useFetch<Project[]>("/api/projects");
+const { data: postsList } = await useFetch<Post[]>("/api/posts");
 
-// Extract unique tags based on active tab
+// 데이터를 안전하게 래핑
+const projects = computed<Project[]>(() => projectsList.value || []);
+const posts = computed<Post[]>(() => postsList.value || []);
+
+// 활성화된 탭을 기반으로 고유한 태그 추출
 const allTags = computed<string[]>(() => {
   const tagsSet = new Set<string>();
 
@@ -235,15 +238,15 @@ const allTags = computed<string[]>(() => {
   return Array.from(tagsSet).sort();
 });
 
-// Filter logic for projects
+// 프로젝트 필터링 로직
 const filteredProjects = computed(() => {
   return projects.value.filter((p) => {
-    // 1. Tag filtering
+    // 1. 태그 필터링
     if (selectedTag.value && (!p.tags || !p.tags.includes(selectedTag.value))) {
       return false;
     }
 
-    // 2. Search query filtering
+    // 2. 검색어 필터링
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase().trim();
       const matchTitle = p.title?.toLowerCase().includes(query);
@@ -258,15 +261,15 @@ const filteredProjects = computed(() => {
   });
 });
 
-// Filter logic for blog posts
+// 블로그 포스트 필터링 로직
 const filteredPosts = computed(() => {
   return posts.value.filter((p) => {
-    // 1. Tag filtering
+    // 1. 태그 필터링
     if (selectedTag.value && (!p.tags || !p.tags.includes(selectedTag.value))) {
       return false;
     }
 
-    // 2. Search query filtering
+    // 2. 검색어 필터링
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase().trim();
       const matchTitle = p.title?.toLowerCase().includes(query);
@@ -280,12 +283,12 @@ const filteredPosts = computed(() => {
   });
 });
 
-// Select tag action
+// 태그 선택 동작
 const selectTag = (tag: string | null) => {
   selectedTag.value = tag;
 };
 
-// Reset actions
+// 초기화 동작
 const resetFilters = () => {
   searchQuery.value = "";
   selectedTag.value = null;

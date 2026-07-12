@@ -11,19 +11,19 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: {
-        // Node.js Globals
+        // Node.js 전역 변수
         process: "readonly",
         console: "readonly",
         Buffer: "readonly",
         __dirname: "readonly",
         __filename: "readonly",
-        // Browser Globals
+        // 브라우저 전역 변수
         window: "readonly",
         document: "readonly",
         fetch: "readonly",
         URL: "readonly",
         URLSearchParams: "readonly",
-        // Nuxt Globals
+        // Nuxt 전역 변수
         $fetch: "readonly",
         defineNuxtConfig: "readonly",
         defineNuxtPlugin: "readonly",
@@ -51,16 +51,10 @@ export default tseslint.config(
       "vue/multi-word-component-names": "off",
       "vue/no-v-html": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   },
   {
-    ignores: [
-      ".nuxt/**",
-      ".output/**",
-      "dist/**",
-      "node_modules/**",
-      "public/data/**"
-    ]
-  }
+    ignores: [".nuxt/**", ".output/**", "dist/**", "node_modules/**", "public/data/**"],
+  },
 );

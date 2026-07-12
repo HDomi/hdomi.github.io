@@ -22,3 +22,4 @@ Thumbs.db
 
 # Generated metadata (since it is re-generated at build time)
 public/data/projects-metadata.json
+firebase.json

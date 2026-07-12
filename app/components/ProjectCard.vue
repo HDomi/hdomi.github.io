@@ -67,7 +67,7 @@ const props = defineProps({
   },
 });
 
-// Fallback logic when image fails to load
+// 이미지 로드 실패 시 대체 표시 로직
 const handleImageError = (event) => {
   event.target.style.display = "none";
   const container = event.target.parentElement;
@@ -84,7 +84,7 @@ const handleImageError = (event) => {
   }
 };
 
-// Date formatting
+// 날짜 형식 변환
 const formattedDate = computed(() => {
   if (!props.project.scrapedAt) return "-";
   try {

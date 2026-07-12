@@ -3,10 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "fetch-metadata": "node scripts/fetch-metadata.js",
-    "build": "node scripts/fetch-metadata.js && npx tsx scripts/fetch-posts.ts && nuxt build",
-    "dev": "node scripts/fetch-metadata.js && npx tsx scripts/fetch-posts.ts && nuxt dev",
-    "generate": "node scripts/fetch-metadata.js && npx tsx scripts/fetch-posts.ts && nuxt generate",
+    "build": "nuxt build",
+    "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",

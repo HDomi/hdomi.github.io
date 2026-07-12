@@ -67,7 +67,7 @@ const props = defineProps<{
   post: Post;
 }>();
 
-// Formatted display date (YYYY. MM. DD)
+// 포맷팅된 표시 날짜 (YYYY. MM. DD)
 const formattedDate = computed(() => {
   if (!props.post.createdAt) return "";
   try {
@@ -82,7 +82,7 @@ const formattedDate = computed(() => {
   }
 });
 
-// Relative time representation (e.g. 2시간 전, 3일 전, etc)
+// 상대적 시간 표시 (예: 2시간 전, 3일 전 등)
 const relativeTime = computed(() => {
   if (!props.post.createdAt) return "-";
   try {

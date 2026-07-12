@@ -13,24 +13,19 @@ RUN pnpm install --frozen-lockfile
 # 소스 코드 복사
 COPY . .
 
-# Firebase 빌드 시 필요한 Arguments 정의 및 환경 변수 주입
-ARG FIREBASE_SERVICE_ACCOUNT_JSON
-ARG FIREBASE_DATABASE_URL
-ENV FIREBASE_SERVICE_ACCOUNT_JSON=$FIREBASE_SERVICE_ACCOUNT_JSON
-ENV FIREBASE_DATABASE_URL=$FIREBASE_DATABASE_URL
+# Nuxt 빌드 실행
+RUN pnpm run build
 
-# Nuxt 정적 사이트 빌드 실행
-RUN pnpm run generate
+# 2단계: Node.js 실행 환경 구성
+FROM node:20-alpine
 
-# 2단계: Nginx 실행 환경 구성
-FROM nginx:alpine
+WORKDIR /app
 
-# Nginx 커스텀 설정 적용
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# 빌드된 파일 복사
+COPY --from=builder /app/.output ./.output
 
-# 빌드된 정적 파일 복사
-COPY --from=builder /app/.output/public /usr/share/nginx/html
+# 포트 설정 및 컨테이너 실행
+ENV PORT=1131
+EXPOSE 1131
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", ".output/server/index.mjs"]

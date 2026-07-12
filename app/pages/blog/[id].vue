@@ -92,7 +92,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useAsyncData, useSeoMeta, useHead, showError } from "#app";
+import { useRoute, useFetch, useSeoMeta, useHead, showError } from "#app";
 import { marked } from "marked";
 
 interface PostDetail {
@@ -107,27 +107,15 @@ interface PostDetail {
 const route = useRoute();
 const postId = route.params.id as string;
 
-// Fetch the individual post detail static JSON file (File read on server, fetch on client)
-const { data: post, error } = await useAsyncData<PostDetail>(`post-${postId}`, async () => {
-  if (process.server) {
-    const fs = await import("node:fs");
-    const path = await import("node:path");
-    const filePath = path.join(process.cwd(), "public/data/posts", `${postId}.json`);
-    if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath, "utf8")) as PostDetail;
-    }
-    throw new Error("Post not found");
-  } else {
-    return $fetch(`/data/posts/${postId}.json`) as Promise<PostDetail>;
-  }
-});
+// API 엔드포인트에서 개별 포스트 세부 정보 가져오기
+const { data: post, error } = await useFetch<PostDetail>(`/api/posts/${postId}`);
 
-// If there is an error, trigger Nuxt error screen or show custom error state
+// 에러 발생 시 Nuxt 에러 화면을 띄우거나 커스텀 에러 상태 표시
 if (error.value) {
   showError({ statusCode: 404, statusMessage: "Post Not Found" });
 }
 
-// Format the date to a localized representation
+// 날짜를 로컬 형식으로 변환
 const formattedDate = computed(() => {
   if (!post.value?.createdAt) return "";
   try {
@@ -144,11 +132,11 @@ const formattedDate = computed(() => {
   }
 });
 
-// Safely parse Markdown using marked library
+// marked 라이브러리를 사용하여 마크다운을 안전하게 파싱
 const parsedContent = computed(() => {
   if (!post.value?.content) return "";
   try {
-    // Return parsed markdown HTML
+    // 파싱된 마크다운 HTML 반환
     return marked.parse(post.value.content);
   } catch (e) {
     console.error("Failed to parse Markdown:", e);
@@ -156,7 +144,7 @@ const parsedContent = computed(() => {
   }
 });
 
-// Configure rich SEO meta headers dynamically for perfect crawler indexing
+// 검색 엔진 크롤러 인덱싱을 위해 동적으로 풍부한 SEO 메타 헤더 구성
 if (post.value) {
   useSeoMeta({
     title: `${post.value.title} | Domi Portal`,

@@ -5,8 +5,6 @@ on:
     branches:
       - main
       - master
-  repository_dispatch:
-    types: [deploy_trigger]
   workflow_dispatch:
 
 env:
@@ -69,17 +67,16 @@ jobs:
           sudo docker stop "$APP_NAME" || true
           sudo docker rm "$APP_NAME" || true
 
-          # Docker 이미지 빌드 (Firebase Secrets 빌드 아규먼트로 전달)
-          sudo docker build \
-            --build-arg FIREBASE_SERVICE_ACCOUNT_JSON='${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}' \
-            --build-arg FIREBASE_DATABASE_URL='${{ secrets.FIREBASE_DATABASE_URL }}' \
-            -t "$APP_NAME:latest" .
+          # Docker 이미지 빌드
+          sudo docker build -t "$APP_NAME:latest" .
 
-          # Docker 컨테이너 실행 (1131 포트 매핑)
+          # Docker 컨테이너 실행 (1131 포트 매핑 및 런타임 Secrets 주입)
           sudo docker run -d \
             --restart unless-stopped \
             --name "$APP_NAME" \
-            -p "$APP_PORT:80" \
+            -p "$APP_PORT:$APP_PORT" \
+            -e FIREBASE_SERVICE_ACCOUNT_JSON='${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}' \
+            -e FIREBASE_DATABASE_URL='${{ secrets.FIREBASE_DATABASE_URL }}' \
             "$APP_NAME:latest"
 
           EOF
