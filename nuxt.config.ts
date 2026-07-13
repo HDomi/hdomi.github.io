@@ -1,3 +1,18 @@
+import fs from "node:fs";
+import path from "node:path";
+
+const getPrerenderRoutes = () => {
+  const filePath = path.join(process.cwd(), "prerender-routes.json");
+  if (fs.existsSync(filePath)) {
+    try {
+      return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    } catch (e) {
+      console.error("Failed to parse prerender-routes.json:", e);
+    }
+  }
+  return [];
+};
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -18,16 +33,11 @@ export default defineNuxtConfig({
   buildId: process.env.NODE_ENV === "production" ? String(Date.now()) : undefined,
   css: ["~/assets/scss/main.scss"],
   buildAssetsDir: "/_nuxt/",
-  cdnURL: process.env.NODE_ENV === "production" ? "https://portal.h-domi.cloud/" : "/",
-  routeRules: {
-    "/_nuxt/**": {
-      headers: {
-        "Access-Control-Allow-Origin": "https://hdomi.github.io",
-        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
-        "Access-Control-Allow-Headers":
-          "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-        "Access-Control-Allow-Credentials": "true",
-      },
+
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ["/", ...getPrerenderRoutes()],
     },
   },
   // SEO 설정을 포함한 앱 구성
