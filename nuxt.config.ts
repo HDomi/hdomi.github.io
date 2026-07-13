@@ -16,6 +16,8 @@ export default defineNuxtConfig({
 
   // 글로벌 CSS/SCSS 가져오기
   css: ["~/assets/scss/main.scss"],
+  buildAssetsDir: "/_nuxt/",
+  cdnURL: process.env.NODE_ENV === "production" ? "https://portal.h-domi.cloud/" : "/",
 
   // SEO 설정을 포함한 앱 구성
   app: {
