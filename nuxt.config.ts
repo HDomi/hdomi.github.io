@@ -52,6 +52,10 @@ export default defineNuxtConfig({
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         {
+          name: "google-site-verification",
+          content: "aNyw_6Fnmqoxlb9DCU4jk_3JlvarV6XAhaQ6f3TL1Io",
+        },
+        {
           name: "description",
           content:
             "도미가 개발하고 배포한 다양한 GitHub Pages 웹 프로젝트들을 한눈에 모아보고 검색할 수 있는 포탈 사이트입니다.",
