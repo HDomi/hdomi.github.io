@@ -195,8 +195,13 @@ onBeforeRender(({ delta }) => {
   mx += scene.joystick.value.x;
   mz += scene.joystick.value.y;
 
+  const hasManualInput = Math.abs(mx) >= 0.05 || Math.abs(mz) >= 0.05;
   const target = scene.moveTarget.value;
-  if (target && Math.abs(mx) < 0.05 && Math.abs(mz) < 0.05) {
+
+  // WASD/조이스틱이 들어오면 클릭 이동 목표를 즉시 해제한다
+  if (target && hasManualInput) {
+    scene.moveTarget.value = null;
+  } else if (target) {
     const dx = target.x - scene.playerPos.value.x;
     const dz = target.z - scene.playerPos.value.z;
     const dist = Math.hypot(dx, dz);
