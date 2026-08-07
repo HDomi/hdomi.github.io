@@ -18,6 +18,8 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
+  modules: ["@tresjs/nuxt"],
+
   typescript: {
     tsConfig: {
       compilerOptions: {
@@ -50,7 +52,10 @@ export default defineNuxtConfig({
       },
       meta: [
         { charset: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1, viewport-fit=cover",
+        },
         {
           name: "google-site-verification",
           content: "aNyw_6Fnmqoxlb9DCU4jk_3JlvarV6XAhaQ6f3TL1Io",
